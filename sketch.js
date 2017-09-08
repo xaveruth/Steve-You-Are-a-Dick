@@ -42,8 +42,10 @@ var startingTime = 0;
 var spacing = 112; //why? 7 bars * 4 beats * 4 sixteenth notes = 112
 var startAheadBy = 0;
 var t = 0;
-var buttonPressed = false;
 var delay = 2000;
+
+//button variables
+var buttonState = false;
 
 
 
@@ -113,13 +115,11 @@ function setup() {
   	
   	//youTube aspect ratio is 16:9
   	//var scale = 70;
-  	//pixelDensity(1);
+  	pixelDensity(3); //higher numbers mean lower res?
   	createCanvas(windowWidth, windowHeight);
   	colorMode(RGB);
 
-      //create a button to play the video
-    button = createButton('Play Video');
-    button.position(0.9 * width, 0.9 * height);
+    keyboardSetup();
 
     //build the cumulative arrays for each voice
 	  buildCumulativeArray(m1Beats, m1Cum);
@@ -130,16 +130,25 @@ function setup() {
 	  buildCumulativeArray(m4Beats, m4Cum);
     buildCumulativeArray(ts1Beats, ts1Cum);
     buildCumulativeArray(ts2Beats, ts2Cum);
-	  
-	  
-	  //initialize and draw key objects
- 	  for (var i = 0; i < numOfKeys; i++) { 
-      keys[i] = new Key(startingX + (gaps[i] * whiteNoteWidth), startingY, codes[i], i);
-      keys[i].display();
-    } 
 
     //song.play();
+    
  
+}
+
+function keyboardSetup() {
+
+  //create a button to play the video
+  if (buttonState === false) button = createButton('Play Video');
+  else if (buttonState === true) button = createButton('Stop Video');
+  button.position(0.9 * width, 0.9 * height);
+
+  //initialize and draw key objects
+  for (var i = 0; i < numOfKeys; i++) { 
+    keys[i] = new Key(startingX + (gaps[i] * whiteNoteWidth), startingY, codes[i], i);
+    keys[i].display();
+  } 
+
 }
 
 function mouseClicked() {
@@ -150,21 +159,44 @@ function mouseClicked() {
 function draw() {
   //clear();
 
-
+  button.mousePressed(checkButton);
 
   //if button is pressed, play the video!
   button.mousePressed(getStartingTime);
-  if (buttonPressed === true) { 
+  if (buttonState === true) { 
     playVideo();
   }
 
+
+  else if (buttonState === false) {
+    //clear();
+    //setup();
+  }
+
+
+}
+
+function checkButton() {
+  if (buttonState === true) buttonState = false;
+  else if (buttonState === false) buttonState = true;
+
+  if (buttonState === true) { 
+    getStartingTime();
+    button.html('Stop Video');
+  }
+
+  else if (buttonState === false) {
+    button.html('Play Video');
+    clear();
+    keyboardSetup();  
+  }
 
 }
 
 function getStartingTime() {
 
   t = millis();
-
+/*
   if (buttonPressed === true) {
     buttonPressed = false;
     button.html('Play Video');
@@ -174,6 +206,7 @@ function getStartingTime() {
     buttonPressed = true;
     button.html('Stop Video');
   }
+  */
 }
 
 
