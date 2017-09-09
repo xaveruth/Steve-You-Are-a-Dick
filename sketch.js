@@ -46,6 +46,8 @@ var delay = 2000;
 
 //button variables
 var buttonState = false;
+var buttonCount = 0;
+var videoActive = false;
 
 
 
@@ -119,7 +121,12 @@ function setup() {
   	createCanvas(windowWidth, windowHeight);
   	colorMode(RGB);
 
+    //initially draw keyboard and button
     keyboardSetup();
+    button = createButton('Play Video');
+    button.position(0.9 * width, 0.9 * height);
+    button.mousePressed(checkButton);
+
 
     //build the cumulative arrays for each voice
 	  buildCumulativeArray(m1Beats, m1Cum);
@@ -136,77 +143,54 @@ function setup() {
  
 }
 
+//initialize and draw key objects
 function keyboardSetup() {
-
-  //create a button to play the video
-  if (buttonState === false) button = createButton('Play Video');
-  else if (buttonState === true) button = createButton('Stop Video');
-  button.position(0.9 * width, 0.9 * height);
-
-  //initialize and draw key objects
   for (var i = 0; i < numOfKeys; i++) { 
     keys[i] = new Key(startingX + (gaps[i] * whiteNoteWidth), startingY, codes[i], i);
     keys[i].display();
   } 
-
-}
-
-function mouseClicked() {
-  //for (var i = 0; i < numOfKeys; i++) {
-
-}
-
-function draw() {
-  //clear();
-
-  button.mousePressed(checkButton);
-
-  //if button is pressed, play the video!
-  button.mousePressed(getStartingTime);
-  if (buttonState === true) { 
-    playVideo();
-  }
-
-
-  else if (buttonState === false) {
-    //clear();
-    //setup();
-  }
-
-
 }
 
 function checkButton() {
+
+  //switch the state of the button if it's been clicked
   if (buttonState === true) buttonState = false;
   else if (buttonState === false) buttonState = true;
 
   if (buttonState === true) { 
-    getStartingTime();
     button.html('Stop Video');
+    getStartingTime();
+    videoActive = true;
   }
 
   else if (buttonState === false) {
     button.html('Play Video');
-    clear();
+    videoActive = false;
+    clear();  //NOTE: clear doesn't clear the button!!!!! (or any DOM element??)
     keyboardSetup();  
   }
 
 }
 
+//create cumulative arrays to advance time through
+function buildCumulativeArray(beatsArray, cumArray) {
+  for (i = 0; i < beatsArray.length; i++) {
+    cumArray[i] = 0;
+    for (var j = 0; j <= i; j++) {
+      cumArray[i] += beatsArray[j];
+    }
+  }
+}
+
+function draw() {
+  //clear();
+  if (videoActive === true) playVideo();
+}
+
+
+//is this even necessary? maybe just do this in draw or something?
 function getStartingTime() {
-
   t = millis();
-/*
-  if (buttonPressed === true) {
-    buttonPressed = false;
-    button.html('Play Video');
-  }
-
-  else if (buttonPressed === false) {
-    buttonPressed = true;
-    button.html('Stop Video');
-  }
-  */
 }
 
 
@@ -265,15 +249,7 @@ function windowResized() {
   	resizeCanvas(windowWidth, windowHeight);
 }
 
-//create cumulative arrays to advance time through
-function buildCumulativeArray(beatsArray, cumArray) {
-	for (i = 0; i < beatsArray.length; i++) {
-	  cumArray[i] = 0;
-	  for (var j = 0; j <= i; j++) {
-      cumArray[i] += beatsArray[j];
-	  }
-	}
-}
+
 
 function playMelody(startingTime, numBeats, numBeatsDec, cumArray, fillsArray, beatsArray, col) {
     
@@ -286,8 +262,6 @@ function playMelody(startingTime, numBeats, numBeatsDec, cumArray, fillsArray, b
     
     //TODO: IF IT'S NOT THE FIRST ONE IN ARRAY, CHANGE previous ONE BACK TO DEFAULT COLOR
     //COROLLARY: ASSIGN A DEFAULT COLOR
-    
-    
     
     //case 1: between startingTime and first 
     var index = -1;
@@ -327,32 +301,35 @@ function playMelody(startingTime, numBeats, numBeatsDec, cumArray, fillsArray, b
 //this is working but it's just really laggy so it only works like every 5 clicks that you try???
 //SOLVED: not redrawing the whole thing constantly fixes this problem, as expected 
 //(i.e. putting the draw loop in setup instead of draw)
-//however, this messes up the video - keys don't revert to white/black - gotta fix
 function mouseClicked() {
 
-  for (var i = 0; i < numOfKeys; i++) {
+  //only allow this if the video is not playing (although maybe it would be fun to let people do this...)
+  if (videoActive === false) {
 
-    if (keys[i].isClicked(mouseX, mouseY) === true) {
-      
-      //change colour of the key that was clicked
-      keys[i].col = color(255,0,0,255);
+    for (var i = 0; i < numOfKeys; i++) {
 
-      //find max value of this.active2 and which key it corresponds to
-      var maxIndex = findMax();
-      var maxActive = keys[maxIndex].active2;
- 
-      //set active number to one higher than the highest active number
-      //UNLESS THE HIGHEST ACTIVE NUMBER IS THE SAME KEY
-      if (maxIndex != i) {
-        keys[i].active2 = maxActive + 1;
+      if (keys[i].isClicked(mouseX, mouseY) === true) {
+        
+        //change colour of the key that was clicked
+        keys[i].col = color(255,0,0,255);
+
+        //find max value of this.active2 and which key it corresponds to
+        var maxIndex = findMax();
+        var maxActive = keys[maxIndex].active2;
+   
+        //set active number to one higher than the highest active number
+        //UNLESS THE HIGHEST ACTIVE NUMBER IS THE SAME KEY
+        if (maxIndex != i) {
+          keys[i].active2 = maxActive + 1;
+        }
+
+        //display key
+        keys[i].display();
+        
+        //wait 2 seconds and change back the colour of ONLY the earliest one still active
+        setTimeout(reDraw, delay);
+       
       }
-
-      //display key
-      keys[i].display();
-      
-      //wait 2 seconds and change back the colour of ONLY the earliest one still active
-      setTimeout(reDraw, delay);
-     
     }
   }
 }
