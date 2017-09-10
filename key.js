@@ -169,73 +169,56 @@ function Key (x, y, code, index) {
     var maxOpacity = 255;
     var opac = 0;
     var whiteRGB = 253;
-    var rDiff, gDiff, bDiff, r, g, b;
-
-
-    //set fade amount
-    if (code == 4) {
-      rDiff = red(col);
-      gDiff = green(col);
-      bDiff = blue(col);
-    }
-
-    else {
-      rDiff = whiteRGB - red(col);
-      gDiff = whiteRGB - green(col);
-      bDiff = whiteRGB - blue(col);
-    }
+    var r, g, b;
+    var numOfKeys = 41;
 
     //black keys
     if (code == 4) {
 
       //fade in
       if (diff < fadeAmount) {  
-        r = 0 + diff / fadeAmount * rDiff;
-        g = 0 + diff / fadeAmount * gDiff;
-        b = 0 + diff / fadeAmount * bDiff;
+        r = 0 + diff / fadeAmount * red(col);
+        g = 0 + diff / fadeAmount * green(col);
+        b = 0 + diff / fadeAmount * blue(col);
         this.col = color(r, g, b);  
       }              
 
       //fade out
       else if (endDiff < fadeAmount) {
-        r = red(col) - (fadeAmount - endDiff) / fadeAmount * rDiff;
-        g = green(col) - (fadeAmount - endDiff) / fadeAmount * gDiff;
-        b = blue(col) - (fadeAmount - endDiff) / fadeAmount * bDiff;
+        r = red(col) - (fadeAmount - endDiff) / fadeAmount * red(col);
+        g = green(col) - (fadeAmount - endDiff) / fadeAmount * green(col);
+        b = blue(col) - (fadeAmount - endDiff) / fadeAmount * blue(col);
         this.col = color(r, g, b);
       }
 
       //neither
-      else {
-        this.col = col;
-      }
+      else this.col = col;
     }
 
     //white keys
     else {
+
       //fade in
-      if (diff < fadeAmount) {                            
-        r = whiteRGB - diff / fadeAmount * rDiff;  
-        g = whiteRGB - diff / fadeAmount * gDiff;  
-        b = whiteRGB - diff / fadeAmount * bDiff;
+      if (diff < fadeAmount) {  
+        r = whiteRGB - diff / fadeAmount * (whiteRGB - red(col));  
+        g = whiteRGB - diff / fadeAmount * (whiteRGB - green(col));  
+        b = whiteRGB - diff / fadeAmount * (whiteRGB - blue(col));
         this.col = color(r, g, b);  
       }              
 
       //fade out
       else if (endDiff < fadeAmount) {
-        r = red(col) + (fadeAmount - endDiff) / fadeAmount * rDiff;
-        g = green(col) + (fadeAmount - endDiff) / fadeAmount * gDiff;
-        b = blue(col) + (fadeAmount - endDiff) / fadeAmount * bDiff;
+        r = red(col) + (fadeAmount - endDiff) / fadeAmount * (whiteRGB - red(col));
+        g = green(col) + (fadeAmount - endDiff) / fadeAmount * (whiteRGB - green(col));
+        b = blue(col) + (fadeAmount - endDiff) / fadeAmount * (whiteRGB - blue(col));
         this.col = color(r, g, b);
       }
 
       //neither
-      else {
-        this.col = col;
-      }
+      else this.col = col;
     }
 
     this.active = 1;
-    //this.col = col;
     this.display(255);
   }
   
