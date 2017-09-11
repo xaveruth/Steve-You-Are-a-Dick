@@ -56,51 +56,45 @@ var codes = [1, 4, 3, 4, 2, 1, 4, 3, 4, 3, 4, 2, 1, 4, 3, 4, 2, 1, 4, 3, 4, 3, 4
 var gaps = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6, 7, 7, 8, 8, 9, 10, 10, 11, 11, 12, 12, 13, 
             14, 14, 15, 15, 16, 17, 17, 18, 18, 19, 19, 20, 21, 21, 22, 22, 23];
             
-//TODO: put each melody into a single, multi-dimensional array?
-var m1Beats = [4,4,4,4,8,4,2,2,4,4,4,4,4,4,4,4,4,2,2,4,4,8,4,4,16];
-var m1Fills = [28,23,21,19,16,null,11,19,18,18,15,15,16,23,21,24,27,30,23,31,33,35,11,19,16];
-var m1Cum = [];
 
-//EXTRA BASS BETWEEN M1 AND M2
-var extraBassBeats = [8,4,4,8,4,4];
-var extraBassFills = [4,7,23,4,7,23];
-var extraBassCum = [];
+/************************************
+GUIDE TO WHICH MELODY IS WHICH
 
-//MELODY TWO: BASSLINE
-var m2Beats = [8,4,4,8,4,4,8,4,4,8,4,4,8,8,8,24];
-/*var m2Lyrics = ['I','hate','you','I','hate','you','despise','despise','you','I','loathe',
-                'and','despise','despise','you'];*/
-var m2Fills = [4,7,23,4,7,23,6,6,23,4,9,12,6,6,23,null];
-var m2Cum = [];
+1. main melody
+2. 2-bar bass intro
+3. bassline - first section
+4. "such a dick"
+5. first countermelody
+6. second countermelody
+7. "dick dick dick"
+8. bassline - third section
 
-//EXTRA: "SUCH A DICK"
-var suchADBeats = [20,2,2,4];
-var suchADFills = [null,11,19,16];
-var suchADCum = [];
+*************************************/
 
-//MELODY THREE: FIRST COUNTERMELODY
-var m3Beats = [8,8,4,12,4,4,4,4,20,4,4,4,8,24];
-var m3Fills = [28,23,21,11,11,19,18,18,16,26,26,30,27,null];
-var m3Cum = [];
+var beatsArray = [
+          [4,4,4,4,8,4,2,2,4,4,4,4,4,4,4,4,4,2,2,4,4,8,4,4,16],
+          [8,4,4,8,4,4],
+          [8,4,4,8,4,4,8,4,4,8,4,4,8,8,8,24],
+          [20,2,2,4],
+          [8,8,4,12,4,4,4,4,20,4,4,4,8,24],
+          [4,8,4,8,8,8,8,8,4,4,8,8,8,24],
+          [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2],
+          [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
+        ];
 
-//MELODY FOUR: SECOND COUNTERMELODY
-var m4Beats = [4,8,4,8,8,8,8,8,4,4,8,8,8,24];
-var m4Fills = [23,31,33,35,23,15,15,16,23,31,33,24,35,null];
-var m4Cum = [];
+var fillsArray = [
+          [28,23,21,19,16,null,11,19,18,18,15,15,16,23,21,24,27,30,23,31,33,35,11,19,16],
+          [4,7,23,4,7,23],
+          [4,7,23,4,7,23,6,6,23,4,9,12,6,6,23,null],
+          [null,11,19,16],
+          [28,23,21,11,11,19,18,18,16,26,26,30,27,null],
+          [23,31,33,35,23,15,15,16,23,31,33,24,35,null],
+          [16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,23,22,23,22,23,22,23,22,28,28,28,23,16,16,23,16,15,15,18,18,16,23,23,23,22,23,22,23,22,23,21,19,16,16,16,16,16,16,16,16],
+          [4,7,23,4,7,23,4,7,4,7,23,4,7,23,4,7,6,6,23,6,6,23,6,6,4,7,23,4,9,23,12,4,6,6,12,4,9,12,6,6,23,6,6,23,6,6,23,28,4,7,23,4,7,23,4,7]
+        ];
 
-//TO CODE: MIDDLE SECTION
 
-//TO CODE: THIRD SECTION INTRO
-
-//THIRD SECTION ONE: DICK DICK DICK
-var ts1Beats = [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2];
-var ts1Fills = [16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,23,22,23,22,23,22,23,22,28,28,28,23,16,16,23,16,15,15,18,18,16,23,23,23,22,23,22,23,22,23,21,19,16,16,16,16,16,16,16,16,];
-var ts1Cum = [];
-
-//THIRD SECTION TWO: BASS
-var ts2Beats = [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2];
-var ts2Fills = [4,7,23,4,7,23,4,7,4,7,23,4,7,23,4,7,6,6,23,6,6,23,6,6,4,7,23,4,9,23,12,4,6,6,12,4,9,12,6,6,23,6,6,23,6,6,23,28,4,7,23,4,7,23,4,7];
-var ts2Cum = [];
+var melodies = [];
 
 //THIRD SECTION THREE: MAKE ME SICK MAKE ME SICK
 //I THINK I NEED TO WRITE THIS DOWN
@@ -127,19 +121,12 @@ function setup() {
     button.position(0.9 * width, 0.9 * height);
     button.mousePressed(checkButton);
 
-
-    //build the cumulative arrays for each voice
-	  buildCumulativeArray(m1Beats, m1Cum);
-	  buildCumulativeArray(extraBassBeats, extraBassCum);
-	  buildCumulativeArray(m2Beats, m2Cum);
-	  buildCumulativeArray(suchADBeats, suchADCum);
-	  buildCumulativeArray(m3Beats, m3Cum);
-	  buildCumulativeArray(m4Beats, m4Cum);
-    buildCumulativeArray(ts1Beats, ts1Cum);
-    buildCumulativeArray(ts2Beats, ts2Cum);
-
-    //song.play();
-    
+    //set up melody objects, populate each beat array, fill array, and build and populate each cumulative array
+    var numOfMelodies = beatsArray.length;
+    for (var i = 0; i < numOfMelodies; i++) {
+      melodies[i] = new Melody(beatsArray[i], fillsArray[i]);
+      melodies[i].buildCumulativeArray();
+    }    
  
 }
 
